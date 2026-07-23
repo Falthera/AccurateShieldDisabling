@@ -26,12 +26,11 @@ jobs:
           java-version: 21
           cache: gradle
 
+      - name: Setup Gradle
+        uses: gradle/actions/setup-gradle@v4
+
       - name: Build with Gradle
-        uses: gradle/gradle-build-action@v4
-        with:
-          gradle-version: 9.5.0
-          arguments: build
-          cache-read-only: false
+        run: ./gradlew build
 
       - name: Upload build artifact
         uses: actions/upload-artifact@v4
@@ -59,6 +58,9 @@ jobs:
           java-version: 21
           cache: gradle
 
+      - name: Setup Gradle
+        uses: gradle/actions/setup-gradle@v4
+
       - name: Determine version
         id: version
         run: |
@@ -80,17 +82,7 @@ jobs:
           sed -i "s/^mod_version=.*/mod_version=${{ steps.version.outputs.version }}/" gradle.properties
 
       - name: Build with Gradle
-        uses: gradle/gradle-build-action@v4
-        with:
-          gradle-version: 9.5.0
-          arguments: build
-          cache-read-only: false
-
-      - name: Download build artifact
-        uses: actions/download-artifact@v4
-        with:
-          name: mod-jar
-          path: build/libs
+        run: ./gradlew build
 
       - name: Create tag and GitHub Release
         uses: softprops/action-gh-release@v2
