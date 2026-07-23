@@ -19,6 +19,10 @@ public class ModConfig {
         LOW, MEDIUM, HIGH
     }
 
+    public static ModConfig getConfig() {
+        return ConfigManager.getConfig();
+    }
+
     public void save() {
         ConfigManager.saveConfig();
     }

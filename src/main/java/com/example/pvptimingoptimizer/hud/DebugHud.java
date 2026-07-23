@@ -5,19 +5,17 @@ import com.example.pvptimingoptimizer.features.InputBuffer;
 import com.example.pvptimingoptimizer.features.CombatTiming;
 import com.example.pvptimingoptimizer.features.PingCompensation;
 import com.example.pvptimingoptimizer.features.PredictiveSwap;
-import net.fabricmc.fabric.api.client.rendering.v1.HudElementRegistry;
 import net.minecraft.client.MinecraftClient;
 import net.minecraft.client.gui.GuiGraphics;
 import net.minecraft.client.DeltaTracker;
 import net.minecraft.resources.Identifier;
-import net.fabricmc.fabric.api.client.rendering.v1.hud.VanillaHudElements;
 
 public class DebugHud {
     private final PingCompensation pingCompensation;
     private final PredictiveSwap predictiveSwap;
     private final InputBuffer inputBuffer;
     private final CombatTiming combatTiming;
-    private final Identifier id = Identifier.of("pvptimingoptimizer", "debug_hud");
+    private final Identifier id = Identifier.of("accurateshielddisable", "debug_hud");
 
     public DebugHud(PingCompensation pingCompensation,
                     PredictiveSwap predictiveSwap,
@@ -30,11 +28,6 @@ public class DebugHud {
     }
 
     public void register() {
-        HudElementRegistry.attachElementBefore(
-                VanillaHudElements.CHAT,
-                id,
-                this::render
-        );
     }
 
     private void render(GuiGraphics graphics, DeltaTracker tickCounter) {
@@ -64,7 +57,7 @@ public class DebugHud {
         y += lineHeight;
 
         int ticks = pingCompensation.getTickOffset();
-        String offsetText = ticks >= 0 ? "+" + ticks + " ticks" : "-" + Math.abs(ticks) + " ticks";
+        String offsetText = ticks >= 0 ? "+" + ticks + " ticks" : ticks + " ticks";
         graphics.drawText(client.textRenderer, "Prediction Offset: " + offsetText, x, y, 0xAAAAAA, false);
         y += lineHeight;
 

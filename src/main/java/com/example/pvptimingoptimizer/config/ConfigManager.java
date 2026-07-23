@@ -15,7 +15,7 @@ import java.nio.file.Path;
 public class ConfigManager {
     private static final Gson GSON = new GsonBuilder().setPrettyPrinting().create();
     private static final Path CONFIG_PATH = MinecraftClient.getInstance()
-            .runDirectory.toPath().resolve("config").resolve("pvptimingoptimizer.json");
+            .runDirectory.toPath().resolve("config").resolve("accurateshielddisable.json");
     private static ModConfig config;
 
     public static ModConfig getConfig() {
