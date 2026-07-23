@@ -10,6 +10,7 @@
   "option.pvptimingoptimizer.predictive_swap_enabled": "Enable Predictive Swap",
   "option.pvptimingoptimizer.prediction_strength": "Prediction Strength",
   "option.pvptimingoptimizer.swap_offset": "Swap Offset",
+  "option.pvptimingoptimizer.auto_attack_on_swap": "Auto Attack on Swap",
   "option.pvptimingoptimizer.ping_compensation_enabled": "Enable Ping Compensation",
   "option.pvptimingoptimizer.latency_multiplier": "Latency Multiplier (x100)",
   "option.pvptimingoptimizer.show_ping_data": "Show Ping Data",

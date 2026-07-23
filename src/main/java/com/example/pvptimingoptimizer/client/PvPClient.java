@@ -15,6 +15,7 @@ import net.fabricmc.fabric.api.client.event.lifecycle.v1.ClientTickEvents;
 import net.fabricmc.fabric.api.client.keybinding.v1.KeyBindingHelper;
 import net.minecraft.client.MinecraftClient;
 import net.minecraft.client.option.KeyBinding;
+import net.minecraft.util.hit.EntityHitResult;
 import org.lwjgl.glfw.GLFW;
 
 import org.slf4j.Logger;
@@ -103,6 +104,15 @@ public class PvPClient implements ClientModInitializer {
             for (int i = 0; i < 9; i++) {
                 if (client.options.hotbarKeys[i].wasPressed()) {
                     inputBuffer.recordHotbar(i);
+                }
+            }
+
+            if (config.autoAttackOnSwap && predictiveSwap.shouldAttackNow(tickTimer.getElapsedTicks())) {
+                if (combatTiming.canFullDamageAttack() && combatTiming.isCombatWeapon() && client.player != null) {
+                    if (client.crosshairTarget instanceof EntityHitResult entityHit) {
+                        client.player.attackEntity(entityHit.getEntity());
+                        predictiveSwap.cancelPendingAttack();
+                    }
                 }
             }
         } catch (Throwable t) {

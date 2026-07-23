@@ -7,6 +7,7 @@ public class ModConfig {
     public boolean predictiveSwapEnabled = true;
     public PredictionStrength predictionStrength = PredictionStrength.MEDIUM;
     public int swapOffset = 0;
+    public boolean autoAttackOnSwap = true;
 
     public boolean pingCompensationEnabled = true;
     public int latencyMultiplier = 100;

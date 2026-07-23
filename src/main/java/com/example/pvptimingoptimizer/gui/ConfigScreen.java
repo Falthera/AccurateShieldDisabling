@@ -44,6 +44,11 @@ public class ConfigScreen {
                                 Text.translatable("option.accurateshielddisable.swap_offset"), config.swapOffset, -5, 5)
                         .setDefaultValue(0)
                         .setSaveConsumer(val -> config.swapOffset = val)
+                        .build())
+                .addEntry(entryBuilder.startBooleanToggle(
+                                Text.translatable("option.accurateshielddisable.auto_attack_on_swap"), config.autoAttackOnSwap)
+                        .setDefaultValue(true)
+                        .setSaveConsumer(val -> config.autoAttackOnSwap = val)
                         .build());
 
         builder.getOrCreateCategory(Text.translatable("category.accurateshielddisable.ping_compensation"))
