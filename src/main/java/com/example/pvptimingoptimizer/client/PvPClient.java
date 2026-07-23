@@ -10,6 +10,7 @@ import com.example.pvptimingoptimizer.features.PredictiveSwap;
 import com.example.pvptimingoptimizer.hud.DebugHud;
 import com.example.pvptimingoptimizer.util.TickTimer;
 import net.fabricmc.api.ClientModInitializer;
+import net.fabricmc.fabric.api.client.event.lifecycle.v1.ClientLifecycleEvents;
 import net.fabricmc.fabric.api.client.event.lifecycle.v1.ClientTickEvents;
 import net.fabricmc.fabric.api.client.keybinding.v1.KeyBindingHelper;
 import net.minecraft.client.MinecraftClient;
@@ -36,27 +37,46 @@ public class PvPClient implements ClientModInitializer {
     }
 
     public static void init() {
-        LOGGER.info("Initializing Accurate Shield Disable");
-        ConfigManager.loadConfig();
+        long start = System.nanoTime();
+        LOGGER.info("Accurate Shield Disable client init starting");
 
-        tickTimer = new TickTimer();
-        predictiveSwap = new PredictiveSwap(tickTimer);
-        pingCompensation = new PingCompensation();
-        inputBuffer = new InputBuffer();
-        combatTiming = new CombatTiming();
+        try {
+            ConfigManager.loadConfig();
 
-        swapKeybinding = KeyBindingHelper.registerKeyBinding(new KeyBinding(
-                "key.accurateshielddisable.weapon_swap",
-                GLFW.GLFW_KEY_F,
-                KeyBinding.Category.MISC
-        ));
+            tickTimer = new TickTimer();
+            predictiveSwap = new PredictiveSwap(tickTimer);
+            pingCompensation = new PingCompensation();
+            inputBuffer = new InputBuffer();
+            combatTiming = new CombatTiming();
 
-        ClientTickEvents.END_CLIENT_TICK.register(PvPClient::onClientTick);
+            swapKeybinding = KeyBindingHelper.registerKeyBinding(new KeyBinding(
+                    "key.accurateshielddisable.weapon_swap",
+                    GLFW.GLFW_KEY_F,
+                    KeyBinding.Category.MISC
+            ));
+
+            ClientTickEvents.END_CLIENT_TICK.register(PvPClient::onClientTick);
+            ClientLifecycleEvents.CLIENT_STARTED.register(client -> {
+                try {
+                    debugHud = new DebugHud(pingCompensation, predictiveSwap, inputBuffer, combatTiming);
+                    debugHud.register();
+                    LOGGER.info("Registered DebugHud");
+                } catch (Throwable t) {
+                    LOGGER.error("Failed to register DebugHud", t);
+                }
+            });
+
+            long ms = (System.nanoTime() - start) / 1_000_000L;
+            LOGGER.info("Accurate Shield Disable client init complete ({} ms)", ms);
+        } catch (Throwable t) {
+            LOGGER.error("Failed during Accurate Shield Disable client init", t);
+            throw t;
+        }
     }
 
     private static void onClientTick(MinecraftClient client) {
         try {
-            if (client == null || client.player == null) {
+            if (client == null || client.player == null || client.world == null) {
                 return;
             }
 
@@ -83,15 +103,6 @@ public class PvPClient implements ClientModInitializer {
             for (int i = 0; i < 9; i++) {
                 if (client.options.hotbarKeys[i].wasPressed()) {
                     inputBuffer.recordHotbar(i);
-                }
-            }
-
-            if (debugHud == null) {
-                debugHud = new DebugHud(pingCompensation, predictiveSwap, inputBuffer, combatTiming);
-                try {
-                    debugHud.register();
-                } catch (Throwable t) {
-                    LOGGER.error("Failed to register DebugHud", t);
                 }
             }
         } catch (Throwable t) {

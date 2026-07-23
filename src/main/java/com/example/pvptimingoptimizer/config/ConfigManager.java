@@ -14,9 +14,12 @@ import java.nio.file.Path;
 
 public class ConfigManager {
     private static final Gson GSON = new GsonBuilder().setPrettyPrinting().create();
-    private static final Path CONFIG_PATH = MinecraftClient.getInstance()
-            .runDirectory.toPath().resolve("config").resolve("accurateshielddisable.json");
     private static ModConfig config;
+
+    private static Path getConfigPath() {
+        return MinecraftClient.getInstance()
+                .runDirectory.toPath().resolve("config").resolve("accurateshielddisable.json");
+    }
 
     public static ModConfig getConfig() {
         if (config == null) {
@@ -27,9 +30,10 @@ public class ConfigManager {
 
     public static void loadConfig() {
         config = new ModConfig();
-        if (Files.exists(CONFIG_PATH)) {
+        Path path = getConfigPath();
+        if (Files.exists(path)) {
             try (BufferedReader reader = new BufferedReader(
-                    new InputStreamReader(Files.newInputStream(CONFIG_PATH), StandardCharsets.UTF_8))) {
+                    new InputStreamReader(Files.newInputStream(path), StandardCharsets.UTF_8))) {
                 ModConfig loaded = GSON.fromJson(reader, ModConfig.class);
                 if (loaded != null) {
                     config = loaded;
@@ -45,9 +49,10 @@ public class ConfigManager {
             return;
         }
         try {
-            Files.createDirectories(CONFIG_PATH.getParent());
+            Path path = getConfigPath();
+            Files.createDirectories(path.getParent());
             try (OutputStreamWriter writer = new OutputStreamWriter(
-                    Files.newOutputStream(CONFIG_PATH), StandardCharsets.UTF_8)) {
+                    Files.newOutputStream(path), StandardCharsets.UTF_8)) {
                 GSON.toJson(config, writer);
             }
         } catch (IOException exception) {
