@@ -26,7 +26,7 @@ public class PredictiveSwap {
         }
 
         LocalPlayer player = client.player;
-        currentSlot = player.getInventory().getSelectedSlot();
+        currentSlot = player.getInventory().selectedSlot;
 
         if (previousSlot != -1 && previousSlot != currentSlot) {
             swapDetected = true;

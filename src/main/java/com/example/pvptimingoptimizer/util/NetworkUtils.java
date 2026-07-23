@@ -2,27 +2,29 @@ package com.example.pvptimingoptimizer.util;
 
 import com.example.pvptimingoptimizer.PvPClient;
 import net.minecraft.client.MinecraftClient;
+import net.minecraft.client.player.LocalPlayer;
 import net.minecraft.client.network.ClientPlayNetworkHandler;
-import net.minecraft.client.network.PlayerListEntry;
+import net.minecraft.client.multiplayer.PlayerInfo;
 
 public class NetworkUtils {
     public static int getPing() {
         MinecraftClient client = MinecraftClient.getInstance();
-        if (client == null) {
+        if (client == null || client.getConnection() == null) {
             return 0;
         }
 
-        ClientPlayNetworkHandler handler = client.getNetworkHandler();
-        if (handler == null) {
+        LocalPlayer player = client.player;
+        if (player == null) {
             return 0;
         }
 
-        PlayerListEntry entry = handler.getPlayerListEntry(client.player.getUuid());
-        if (entry == null) {
-            entry = handler.getPlayerListEntry(client.player.getGameProfile().getName());
+        ClientPlayNetworkHandler handler = (ClientPlayNetworkHandler) client.getConnection();
+        PlayerInfo info = handler.getPlayerListEntry(player.getUuid());
+        if (info == null) {
+            info = handler.getCaseInsensitivePlayerInfo(player.getName().getString());
         }
 
-        return entry != null ? entry.getLatency() : 0;
+        return info != null ? info.getLatency() : 0;
     }
 
     public static float tickRate() {

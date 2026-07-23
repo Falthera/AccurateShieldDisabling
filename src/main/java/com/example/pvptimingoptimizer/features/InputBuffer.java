@@ -95,6 +95,6 @@ public class InputBuffer {
         if (client == null || client.player == null) {
             return -1;
         }
-        return client.player.getInventory().getSelectedSlot();
+        return client.player.getInventory().selectedSlot;
     }
 }
