@@ -1,6 +1,6 @@
-package com.example.accurateshielddisable.gui;
+package com.example.pvptimingoptimizer.gui;
 
-import com.example.accurateshielddisable.config.ModConfig;
+import com.example.pvptimingoptimizer.config.ModConfig;
 import net.minecraft.client.MinecraftClient;
 import net.minecraft.client.gui.screen.Screen;
 import net.minecraft.text.Component;

@@ -69,17 +69,17 @@ public class PvPClient implements ClientModInitializer {
         inputBuffer.tick();
         combatTiming.tick();
 
-        if (swapKeybinding.consumeClick()) {
-            int currentSlot = client.player.getInventory().selectedSlot;
+        if (swapKeybinding.wasPressed()) {
+            int currentSlot = client.player.getInventory().getSelectedSlot();
             inputBuffer.recordSwap(currentSlot);
         }
 
-        if (client.options.attackKey.consumeClick()) {
+        if (client.options.attackKey.wasPressed()) {
             inputBuffer.recordAttack();
         }
 
         for (int i = 0; i < 9; i++) {
-            if (client.options.hotbarKeys[i].consumeClick()) {
+            if (client.options.hotbarKeys[i].wasPressed()) {
                 inputBuffer.recordHotbar(i);
             }
         }

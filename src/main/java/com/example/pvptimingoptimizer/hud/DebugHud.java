@@ -5,7 +5,7 @@ import com.example.pvptimingoptimizer.features.InputBuffer;
 import com.example.pvptimingoptimizer.features.CombatTiming;
 import com.example.pvptimingoptimizer.features.PingCompensation;
 import com.example.pvptimingoptimizer.features.PredictiveSwap;
-import net.fabricmc.fabric.api.client.rendering.v1.HudElementRegistry;
+import net.fabricmc.fabric.api.client.rendering.v1.hud.HudElementRegistry;
 import net.minecraft.client.MinecraftClient;
 import net.minecraft.client.gui.GuiGraphics;
 import net.minecraft.client.DeltaTracker;

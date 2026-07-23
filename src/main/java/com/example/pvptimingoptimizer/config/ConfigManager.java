@@ -2,7 +2,7 @@ package com.example.pvptimingoptimizer.config;
 
 import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
-import com.example.pvptimingoptimizer.PvPClient;
+import com.example.pvptimingoptimizer.client.PvPClient;
 import net.minecraft.client.MinecraftClient;
 import java.io.BufferedReader;
 import java.io.IOException;

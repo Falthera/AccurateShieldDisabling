@@ -2,26 +2,26 @@ package com.example.pvptimingoptimizer.util;
 
 import com.example.pvptimingoptimizer.PvPClient;
 import net.minecraft.client.MinecraftClient;
-import net.minecraft.client.player.LocalPlayer;
+import net.minecraft.client.player.ClientPlayerEntity;
 import net.minecraft.client.network.ClientPlayNetworkHandler;
-import net.minecraft.client.multiplayer.PlayerInfo;
+import net.minecraft.client.network.PlayerListEntry;
 
 public class NetworkUtils {
     public static int getPing() {
         MinecraftClient client = MinecraftClient.getInstance();
-        if (client == null || client.getConnection() == null) {
+        if (client == null || client.getNetworkHandler() == null) {
             return 0;
         }
 
-        LocalPlayer player = client.player;
+        ClientPlayerEntity player = client.player;
         if (player == null) {
             return 0;
         }
 
-        ClientPlayNetworkHandler handler = (ClientPlayNetworkHandler) client.getConnection();
-        PlayerInfo info = handler.getPlayerListEntry(player.getUuid());
+        ClientPlayNetworkHandler handler = client.getNetworkHandler();
+        PlayerListEntry info = handler.getPlayerListEntry(player.getUuid());
         if (info == null) {
-            info = handler.getCaseInsensitivePlayerInfo(player.getName().getString());
+            info = handler.getPlayerListEntry(player.getName().getString());
         }
 
         return info != null ? info.getLatency() : 0;

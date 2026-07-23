@@ -4,7 +4,7 @@ import com.example.pvptimingoptimizer.config.ModConfig;
 import com.example.pvptimingoptimizer.util.TickTimer;
 import com.example.pvptimingoptimizer.util.NetworkUtils;
 import net.minecraft.client.MinecraftClient;
-import net.minecraft.client.player.LocalPlayer;
+import net.minecraft.client.player.ClientPlayerEntity;
 import net.minecraft.item.*;
 import net.minecraft.screen.slot.SlotActionType;
 
@@ -25,8 +25,8 @@ public class PredictiveSwap {
             return;
         }
 
-        LocalPlayer player = client.player;
-        currentSlot = player.getInventory().selectedSlot;
+        ClientPlayerEntity player = client.player;
+        currentSlot = player.getInventory().getSelectedSlot();
 
         if (previousSlot != -1 && previousSlot != currentSlot) {
             swapDetected = true;
@@ -63,11 +63,11 @@ public class PredictiveSwap {
         if (client == null || client.player == null) {
             return false;
         }
-        ItemStack main = client.player.getMainHandItem();
-        if (main.isEmpty()) {
+        ItemStack stack = client.player.getMainHandStack();
+        if (stack.isEmpty()) {
             return false;
         }
-        Item item = main.getItem();
+        Item item = stack.getItem();
         return item instanceof SwordItem || item instanceof AxeItem;
     }
 

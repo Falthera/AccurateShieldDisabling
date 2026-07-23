@@ -3,7 +3,7 @@ package com.example.pvptimingoptimizer.features;
 import com.example.pvptimingoptimizer.config.ModConfig;
 import com.example.pvptimingoptimizer.util.NetworkUtils;
 import net.minecraft.client.MinecraftClient;
-import net.minecraft.client.player.LocalPlayer;
+import net.minecraft.client.player.ClientPlayerEntity;
 import net.minecraft.item.ItemStack;
 import net.minecraft.item.Items;
 import net.minecraft.item.SwordItem;
@@ -22,8 +22,8 @@ public class CombatTiming {
             return;
         }
 
-        LocalPlayer player = client.player;
-        ItemStack stack = player.getMainHandItem();
+        ClientPlayerEntity player = client.player;
+        ItemStack stack = player.getMainHandStack();
 
         if (stack.isEmpty()) {
             weaponType = "none";
