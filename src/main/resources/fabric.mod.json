@@ -11,7 +11,7 @@
   "environment": "client",
   "entrypoints": {
     "client": [
-      "com.example.pvptimingoptimizer.PvPClient"
+      "com.example.pvptimingoptimizer.client.PvPClient"
     ],
     "modmenu": [
       "com.example.pvptimingoptimizer.gui.ModMenuIntegration"
