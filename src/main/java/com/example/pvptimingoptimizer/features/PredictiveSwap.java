@@ -4,7 +4,7 @@ import com.example.pvptimingoptimizer.config.ModConfig;
 import com.example.pvptimingoptimizer.util.TickTimer;
 import com.example.pvptimingoptimizer.util.NetworkUtils;
 import net.minecraft.client.MinecraftClient;
-import net.minecraft.client.player.ClientPlayerEntity;
+import net.minecraft.client.network.ClientPlayerEntity;
 import net.minecraft.item.*;
 import net.minecraft.screen.slot.SlotActionType;
 
@@ -68,7 +68,7 @@ public class PredictiveSwap {
             return false;
         }
         Item item = stack.getItem();
-        return item instanceof SwordItem || item instanceof AxeItem;
+        return item instanceof AxeItem;
     }
 
     public int getPreviousSlot() {

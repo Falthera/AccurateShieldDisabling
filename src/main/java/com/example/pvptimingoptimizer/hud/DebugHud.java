@@ -7,9 +7,9 @@ import com.example.pvptimingoptimizer.features.PingCompensation;
 import com.example.pvptimingoptimizer.features.PredictiveSwap;
 import net.fabricmc.fabric.api.client.rendering.v1.hud.HudElementRegistry;
 import net.minecraft.client.MinecraftClient;
-import net.minecraft.client.gui.GuiGraphics;
-import net.minecraft.client.DeltaTracker;
-import net.minecraft.resources.Identifier;
+import net.minecraft.client.gui.DrawContext;
+import net.minecraft.client.render.RenderTickCounter;
+import net.minecraft.util.Identifier;
 import net.fabricmc.fabric.api.client.rendering.v1.hud.VanillaHudElements;
 
 public class DebugHud {
@@ -37,7 +37,7 @@ public class DebugHud {
         );
     }
 
-    private void render(GuiGraphics graphics, DeltaTracker tickCounter) {
+    private void render(DrawContext graphics, RenderTickCounter tickCounter) {
         ModConfig config = ModConfig.getConfig();
         if (!config.enabled || !config.debugHud) {
             return;

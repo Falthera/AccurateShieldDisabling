@@ -3,10 +3,8 @@ package com.example.pvptimingoptimizer.features;
 import com.example.pvptimingoptimizer.config.ModConfig;
 import com.example.pvptimingoptimizer.util.NetworkUtils;
 import net.minecraft.client.MinecraftClient;
-import net.minecraft.client.player.ClientPlayerEntity;
+import net.minecraft.client.network.ClientPlayerEntity;
 import net.minecraft.item.ItemStack;
-import net.minecraft.item.Items;
-import net.minecraft.item.SwordItem;
 import net.minecraft.item.AxeItem;
 
 public class CombatTiming {
@@ -31,10 +29,7 @@ public class CombatTiming {
             return;
         }
 
-        if (stack.getItem() instanceof SwordItem) {
-            weaponType = "sword";
-            cooldownPerTick = player.getAttackCooldownProgressPerTick();
-        } else if (stack.getItem() instanceof AxeItem) {
+        if (stack.getItem() instanceof AxeItem) {
             weaponType = "axe";
             cooldownPerTick = player.getAttackCooldownProgressPerTick();
         } else {
@@ -46,7 +41,7 @@ public class CombatTiming {
     }
 
     public boolean isCombatWeapon() {
-        return "sword".equals(weaponType) || "axe".equals(weaponType);
+        return "axe".equals(weaponType);
     }
 
     public String getWeaponType() {

@@ -1,8 +1,8 @@
 package com.example.pvptimingoptimizer.util;
 
-import com.example.pvptimingoptimizer.PvPClient;
+import com.example.pvptimingoptimizer.client.PvPClient;
 import net.minecraft.client.MinecraftClient;
-import net.minecraft.client.player.ClientPlayerEntity;
+import net.minecraft.client.network.ClientPlayerEntity;
 import net.minecraft.client.network.ClientPlayNetworkHandler;
 import net.minecraft.client.network.PlayerListEntry;
 
