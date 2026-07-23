@@ -1,6 +1,12 @@
 # Accurate Shield Disable
 
-Reduces or disables the Minecraft shield blocking cooldown for more accurate PvP combat experience.
+Makes Minecraft shield disabling easier and more consistent in PvP by automatically timing axe attacks when you swap to an axe.
+
+## What it does
+
+- Detects combat-ready weapon swaps to an axe
+- Uses ping-aware prediction to time the first hit right as the target's shield goes up
+- Lets you confirm reliable shield breaks instead of manually guessing the timing across distance and latency
 
 ## Installation
 

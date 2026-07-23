@@ -3,7 +3,7 @@
   "id": "accurateshielddisable",
   "version": "${version}",
   "name": "Accurate Shield Disable",
-  "description": "Reduces or disables the shield blocking cooldown for more accurate PvP combat.",
+  "description": "Improves shield disabling consistency by timing axe attacks on combat swaps.",
   "authors": [
     "Example"
   ],
