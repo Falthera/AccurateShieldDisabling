@@ -11,6 +11,8 @@ public class Main implements ClientModInitializer {
 
     @Override
     public void onInitializeClient() {
+        LOGGER.info("Accurate Shield Disable client init starting");
         PvPClient.init();
+        LOGGER.info("Accurate Shield Disable client init complete");
     }
 }

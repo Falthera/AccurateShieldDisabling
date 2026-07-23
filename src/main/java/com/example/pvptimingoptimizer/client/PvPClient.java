@@ -36,6 +36,7 @@ public class PvPClient implements ClientModInitializer {
     }
 
     public static void init() {
+        LOGGER.info("Initializing Accurate Shield Disable");
         ConfigManager.loadConfig();
 
         tickTimer = new TickTimer();
@@ -54,39 +55,47 @@ public class PvPClient implements ClientModInitializer {
     }
 
     private static void onClientTick(MinecraftClient client) {
-        if (client == null || client.player == null) {
-            return;
-        }
-
-        ModConfig config = ModConfig.getConfig();
-        if (!config.enabled) {
-            return;
-        }
-
-        tickTimer.tick();
-        predictiveSwap.tick();
-        pingCompensation.update();
-        inputBuffer.tick();
-        combatTiming.tick();
-
-        if (swapKeybinding.wasPressed()) {
-            int currentSlot = client.player.getInventory().getSelectedSlot();
-            inputBuffer.recordSwap(currentSlot);
-        }
-
-        if (client.options.attackKey.wasPressed()) {
-            inputBuffer.recordAttack();
-        }
-
-        for (int i = 0; i < 9; i++) {
-            if (client.options.hotbarKeys[i].wasPressed()) {
-                inputBuffer.recordHotbar(i);
+        try {
+            if (client == null || client.player == null) {
+                return;
             }
-        }
 
-        if (debugHud == null) {
-            debugHud = new DebugHud(pingCompensation, predictiveSwap, inputBuffer, combatTiming);
-            debugHud.register();
+            ModConfig config = ModConfig.getConfig();
+            if (!config.enabled) {
+                return;
+            }
+
+            tickTimer.tick();
+            predictiveSwap.tick();
+            pingCompensation.update();
+            inputBuffer.tick();
+            combatTiming.tick();
+
+            if (swapKeybinding.wasPressed()) {
+                int currentSlot = client.player.getInventory().getSelectedSlot();
+                inputBuffer.recordSwap(currentSlot);
+            }
+
+            if (client.options.attackKey.wasPressed()) {
+                inputBuffer.recordAttack();
+            }
+
+            for (int i = 0; i < 9; i++) {
+                if (client.options.hotbarKeys[i].wasPressed()) {
+                    inputBuffer.recordHotbar(i);
+                }
+            }
+
+            if (debugHud == null) {
+                debugHud = new DebugHud(pingCompensation, predictiveSwap, inputBuffer, combatTiming);
+                try {
+                    debugHud.register();
+                } catch (Throwable t) {
+                    LOGGER.error("Failed to register DebugHud", t);
+                }
+            }
+        } catch (Throwable t) {
+            LOGGER.error("Error in onClientTick", t);
         }
     }
 }
