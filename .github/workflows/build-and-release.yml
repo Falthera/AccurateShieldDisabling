@@ -30,7 +30,7 @@ jobs:
         uses: gradle/actions/setup-gradle@v4
 
       - name: Build with Gradle
-        run: ./gradlew build
+        run: gradle build
 
       - name: Upload build artifact
         uses: actions/upload-artifact@v4
@@ -82,7 +82,7 @@ jobs:
           sed -i "s/^mod_version=.*/mod_version=${{ steps.version.outputs.version }}/" gradle.properties
 
       - name: Build with Gradle
-        run: ./gradlew build
+        run: gradle build
 
       - name: Create tag and GitHub Release
         uses: softprops/action-gh-release@v2
