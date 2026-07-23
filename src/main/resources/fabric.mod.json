@@ -1,0 +1,25 @@
+{
+  "schemaVersion": 1,
+  "id": "accurateshielddisable",
+  "version": "${version}",
+  "name": "Accurate Shield Disable",
+  "description": "Reduces or disables the shield blocking cooldown for more accurate PvP combat.",
+  "authors": [
+    "Example"
+  ],
+  "license": "MIT",
+  "environment": "client",
+  "entrypoints": {
+    "client": [
+      "com.example.pvptimingoptimizer.PvPClient"
+    ],
+    "modmenu": [
+      "com.example.pvptimingoptimizer.gui.ModMenuIntegration"
+    ]
+  },
+  "depends": {
+    "fabricloader": ">=0.18.2",
+    "minecraft": "~1.21.11",
+    "fabric-api": "*"
+  }
+}

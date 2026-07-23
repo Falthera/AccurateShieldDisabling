@@ -1,0 +1,18 @@
+{
+  "key.pvptimingoptimizer.weapon_swap": "Weapon Swap",
+  "config.pvptimingoptimizer.title": "PvP Timing Optimizer",
+  "category.pvptimingoptimizer.general": "General",
+  "category.pvptimingoptimizer.predictive_swap": "Predictive Swapping",
+  "category.pvptimingoptimizer.ping_compensation": "Ping Compensation",
+  "category.pvptimingoptimizer.input_buffer": "Input Buffer",
+  "option.pvptimingoptimizer.enabled": "Enable Mod",
+  "option.pvptimingoptimizer.debug_hud": "Enable Debug HUD",
+  "option.pvptimingoptimizer.predictive_swap_enabled": "Enable Predictive Swap",
+  "option.pvptimingoptimizer.prediction_strength": "Prediction Strength",
+  "option.pvptimingoptimizer.swap_offset": "Swap Offset",
+  "option.pvptimingoptimizer.ping_compensation_enabled": "Enable Ping Compensation",
+  "option.pvptimingoptimizer.latency_multiplier": "Latency Multiplier (x100)",
+  "option.pvptimingoptimizer.show_ping_data": "Show Ping Data",
+  "option.pvptimingoptimizer.input_buffer_enabled": "Enable Input Buffer",
+  "option.pvptimingoptimizer.buffer_length": "Buffer Length (Ticks)"
+}
