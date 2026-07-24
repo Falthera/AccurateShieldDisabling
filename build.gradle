@@ -10,6 +10,7 @@ repositories {
     maven { url "https://maven.shedaniel.me/" }
     maven { url "https://maven.architectury.dev/" }
     maven { url "https://jitpack.io" }
+    maven { url "https://repo.spongepowered.org/maven" }
 }
 
 dependencies {
@@ -23,8 +24,8 @@ dependencies {
 
     modImplementation "me.shedaniel.cloth:cloth-config-fabric:${cloth_config_version}"
 
-    modImplementation "org.spongepowered:mixin:0.8.5"
-    annotationProcessor "org.spongepowered:mixin:0.8.5"
+    modImplementation "org.spongepowered:mixin:0.8.2"
+    annotationProcessor "org.spongepowered:mixin:0.8.2"
 }
 
 base {
