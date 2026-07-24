@@ -16,7 +16,7 @@ public class ModConfig {
     public boolean inputBufferEnabled = true;
     public int bufferLength = 5;
 
-    public int attackWindowTicks = 25;
+    public int attackWindowTicks = 20;
 
     public enum PredictionStrength {
         LOW, MEDIUM, HIGH

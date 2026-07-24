@@ -1,0 +1,14 @@
+{
+  "enabled": true,
+  "debugHud": false,
+  "predictiveSwapEnabled": true,
+  "predictionStrength": "HIGH",
+  "swapOffset": 1,
+  "autoAttackOnSwap": true,
+  "pingCompensationEnabled": true,
+  "latencyMultiplier": 150,
+  "showPingData": false,
+  "inputBufferEnabled": true,
+  "bufferLength": 5,
+  "attackWindowTicks": 20
+}
