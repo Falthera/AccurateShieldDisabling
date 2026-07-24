@@ -52,24 +52,7 @@ public class DebugHud {
         int y = 2;
         int lineHeight = 10;
 
-        graphics.drawText(client.textRenderer, "PvP Timing Debug", x, y, 0xFFFFFF, false);
-        y += lineHeight;
-
-        int ping = pingCompensation.getPing();
-        graphics.drawText(client.textRenderer, "Ping: " + ping + "ms", x, y, 0xAAAAAA, false);
-        y += lineHeight;
-
-        float tickRate = pingCompensation.getTickRate();
-        graphics.drawText(client.textRenderer, "Server Tick Rate: " + String.format("%.1f", tickRate) + " TPS", x, y, 0xAAAAAA, false);
-        y += lineHeight;
-
-        int ticks = pingCompensation.getTickOffset();
-        String offsetText = ticks >= 0 ? "+" + ticks + " ticks" : "-" + Math.abs(ticks) + " ticks";
-        graphics.drawText(client.textRenderer, "Prediction Offset: " + offsetText, x, y, 0xAAAAAA, false);
-        y += lineHeight;
-
-        int confidence = predictiveSwap.getConfidence();
-        graphics.drawText(client.textRenderer, "Swap Confidence: " + confidence + "%", x, y, 0xAAAAAA, false);
+        graphics.drawText(client.textRenderer, "Accurate Shield Disable", x, y, 0xFFFFFF, false);
         y += lineHeight;
 
         String weapon = combatTiming.getWeaponType();
@@ -78,6 +61,15 @@ public class DebugHud {
 
         float cd = combatTiming.getCooldownProgress();
         graphics.drawText(client.textRenderer, "Cooldown: " + String.format("%.0f%%", cd * 100), x, y, 0xAAAAAA, false);
+        y += lineHeight;
+
+        int ping = pingCompensation.getPing();
+        graphics.drawText(client.textRenderer, "Ping: " + ping + "ms", x, y, 0xAAAAAA, false);
+        y += lineHeight;
+
+        int remaining = predictiveSwap.getRemainingWindowTicks((int) (client.world.getTime() % Integer.MAX_VALUE));
+        String windowText = predictiveSwap.wasSwapDetected() ? remaining + " ticks left" : "idle";
+        graphics.drawText(client.textRenderer, "Attack Window: " + windowText, x, y, 0xAAAAAA, false);
         y += lineHeight;
 
         if (config.showPingData) {

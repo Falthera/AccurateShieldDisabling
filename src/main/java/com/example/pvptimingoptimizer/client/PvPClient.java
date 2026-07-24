@@ -8,6 +8,7 @@ import com.example.pvptimingoptimizer.features.InputBuffer;
 import com.example.pvptimingoptimizer.features.PingCompensation;
 import com.example.pvptimingoptimizer.features.PredictiveSwap;
 import com.example.pvptimingoptimizer.hud.DebugHud;
+import com.example.pvptimingoptimizer.mixin.ShieldDisableBypass;
 import com.example.pvptimingoptimizer.util.TickTimer;
 import net.fabricmc.api.ClientModInitializer;
 import net.fabricmc.fabric.api.client.event.lifecycle.v1.ClientLifecycleEvents;
@@ -108,15 +109,56 @@ public class PvPClient implements ClientModInitializer {
             }
 
             if (config.autoAttackOnSwap && predictiveSwap.shouldAttackNow(tickTimer.getElapsedTicks())) {
-                if (combatTiming.canFullDamageAttack() && combatTiming.isCombatWeapon() && client.player != null) {
+                if (combatTiming.isCombatWeapon() && client.player != null) {
                     if (client.crosshairTarget instanceof EntityHitResult entityHit) {
-                        client.interactionManager.attackEntity(client.player, entityHit.getEntity());
-                        predictiveSwap.cancelPendingAttack();
+                        try {
+                            ShieldDisableBypass.setBypass(true);
+                            resetAttackCooldown();
+                            client.interactionManager.attackEntity(client.player, entityHit.getEntity());
+                        } finally {
+                            ShieldDisableBypass.setBypass(false);
+                        }
+                        predictiveSwap.onAttackSent();
                     }
                 }
             }
         } catch (Throwable t) {
             LOGGER.error("Error in onClientTick", t);
+        }
+    }
+
+    private static void resetAttackCooldown() {
+        MinecraftClient client = MinecraftClient.getInstance();
+        if (client == null || client.interactionManager == null) {
+            return;
+        }
+
+        try {
+            java.lang.reflect.Field field = client.interactionManager.getClass().getDeclaredField("attackCooldown");
+            field.setAccessible(true);
+            field.setInt(client.interactionManager, 0);
+        } catch (NoSuchFieldException e) {
+            try {
+                java.lang.reflect.Field field = client.interactionManager.getClass().getDeclaredField("field_18725");
+                field.setAccessible(true);
+                field.setInt(client.interactionManager, 0);
+            } catch (Exception e2) {
+                Class<?> clazz = client.interactionManager.getClass();
+                while (clazz != null) {
+                    try {
+                        java.lang.reflect.Field field = clazz.getDeclaredField("attackCooldown");
+                        field.setAccessible(true);
+                        field.setInt(client.interactionManager, 0);
+                        return;
+                    } catch (NoSuchFieldException e3) {
+                        clazz = clazz.getSuperclass();
+                    } catch (Exception e3) {
+                        return;
+                    }
+                }
+            }
+        } catch (Exception e) {
+            // ignore
         }
     }
 }

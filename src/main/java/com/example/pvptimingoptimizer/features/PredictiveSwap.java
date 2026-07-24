@@ -15,7 +15,11 @@ public class PredictiveSwap {
     private final TickTimer timer;
 
     private boolean pendingAutoAttack = false;
-    private int scheduledAttackTick = 0;
+    private int attackWindowEnd = 0;
+    private int lastAttackTick = 0;
+
+    private static final int DEFAULT_WINDOW_TICKS = 10;
+    private static final int ATTACK_INTERVAL_TICKS = 1;
 
     public PredictiveSwap(TickTimer timer) {
         this.timer = timer;
@@ -36,11 +40,10 @@ public class PredictiveSwap {
 
             if (isCombatSwap()) {
                 ModConfig config = ModConfig.getConfig();
-                int predictedTickOffset = config.swapOffset + (int) NetworkUtils.ticksFromPing(NetworkUtils.getPing());
-                int strength = getStrengthFromConfig(config.predictionStrength);
-                if (predictedTickOffset > 0 && strength > 0) {
+                if (config.autoAttackOnSwap) {
                     pendingAutoAttack = true;
-                    scheduledAttackTick = timer.getElapsedTicks() + Math.max(1, predictedTickOffset);
+                    attackWindowEnd = timer.getElapsedTicks() + getAttackWindowTicks();
+                    lastAttackTick = 0;
                 }
             }
         } else if (swapCooldown > 0) {
@@ -65,22 +68,27 @@ public class PredictiveSwap {
         if (swapCooldown > 0) {
             return false;
         }
-        if (currentTick < scheduledAttackTick) {
+        if (currentTick >= attackWindowEnd) {
+            pendingAutoAttack = false;
+            return false;
+        }
+        if (currentTick < lastAttackTick + ATTACK_INTERVAL_TICKS) {
             return false;
         }
         return true;
+    }
+
+    public void onAttackSent() {
+        lastAttackTick = timer.getElapsedTicks();
     }
 
     public void cancelPendingAttack() {
         pendingAutoAttack = false;
     }
 
-    private int getStrengthFromConfig(ModConfig.PredictionStrength strength) {
-        return switch (strength) {
-            case LOW -> 1;
-            case MEDIUM -> 2;
-            case HIGH -> 3;
-        };
+    private int getAttackWindowTicks() {
+        ModConfig config = ModConfig.getConfig();
+        return Math.max(1, config.attackWindowTicks);
     }
 
     private boolean isCombatSwap() {
@@ -126,5 +134,12 @@ public class PredictiveSwap {
             return 0;
         }
         return 50 + (swapCooldown * 10);
+    }
+
+    public int getRemainingWindowTicks(int currentTick) {
+        if (!pendingAutoAttack) {
+            return 0;
+        }
+        return Math.max(0, attackWindowEnd - currentTick);
     }
 }

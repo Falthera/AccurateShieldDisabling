@@ -9,6 +9,9 @@
   ],
   "license": "MIT",
   "environment": "client",
+  "mixins": [
+    "accurateshielddisable.mixins.json"
+  ],
   "entrypoints": {
     "client": [
       "com.example.pvptimingoptimizer.client.PvPClient"
