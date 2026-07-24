@@ -18,7 +18,6 @@ public class PredictiveSwap {
     private int attackWindowEnd = 0;
     private int lastAttackTick = 0;
 
-    private static final int DEFAULT_WINDOW_TICKS = 10;
     private static final int ATTACK_INTERVAL_TICKS = 1;
 
     public PredictiveSwap(TickTimer timer) {
@@ -40,9 +39,11 @@ public class PredictiveSwap {
 
             if (isCombatSwap()) {
                 ModConfig config = ModConfig.getConfig();
-                if (config.autoAttackOnSwap) {
+                if (config.autoAttackOnSwap && config.predictiveSwapEnabled) {
                     pendingAutoAttack = true;
-                    attackWindowEnd = timer.getElapsedTicks() + getAttackWindowTicks();
+                    int windowTicks = Math.max(1, config.attackWindowTicks);
+                    int offsetTicks = applySwapOffset(config.swapOffset);
+                    attackWindowEnd = timer.getElapsedTicks() + windowTicks + offsetTicks;
                     lastAttackTick = 0;
                 }
             }
@@ -86,9 +87,17 @@ public class PredictiveSwap {
         pendingAutoAttack = false;
     }
 
-    private int getAttackWindowTicks() {
+    private int applySwapOffset(int offset) {
+        if (offset == 0) {
+            return 0;
+        }
+
         ModConfig config = ModConfig.getConfig();
-        return Math.max(1, config.attackWindowTicks);
+        if (config.pingCompensationEnabled) {
+            int pingTicks = (int) Math.ceil(NetworkUtils.ticksFromPing(NetworkUtils.getPing()) * (config.latencyMultiplier / 100.0));
+            return offset + (int) Math.round(pingTicks * 0.5);
+        }
+        return offset;
     }
 
     private boolean isCombatSwap() {

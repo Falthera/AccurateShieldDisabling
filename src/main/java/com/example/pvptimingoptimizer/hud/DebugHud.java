@@ -67,6 +67,10 @@ public class DebugHud {
         graphics.drawText(client.textRenderer, "Ping: " + ping + "ms", x, y, 0xAAAAAA, false);
         y += lineHeight;
 
+        int offset = pingCompensation.getTickOffset();
+        graphics.drawText(client.textRenderer, "Ping Offset: " + offset + " ticks", x, y, 0xAAAAAA, false);
+        y += lineHeight;
+
         int remaining = predictiveSwap.getRemainingWindowTicks((int) (client.world.getTime() % Integer.MAX_VALUE));
         String windowText = predictiveSwap.wasSwapDetected() ? remaining + " ticks left" : "idle";
         graphics.drawText(client.textRenderer, "Attack Window: " + windowText, x, y, 0xAAAAAA, false);
@@ -74,6 +78,13 @@ public class DebugHud {
 
         if (config.showPingData) {
             graphics.drawText(client.textRenderer, "Buffer Size: " + inputBuffer.getSize(), x, y, 0xAAAAAA, false);
+            y += lineHeight;
         }
+
+        String strength = config.predictionStrength.name();
+        graphics.drawText(client.textRenderer, "Strength: " + strength, x, y, 0xAAAAAA, false);
+        y += lineHeight;
+
+        graphics.drawText(client.textRenderer, "Window: " + config.attackWindowTicks + " ticks", x, y, 0xAAAAAA, false);
     }
 }

@@ -8,6 +8,7 @@ import com.example.pvptimingoptimizer.features.InputBuffer;
 import com.example.pvptimingoptimizer.features.PingCompensation;
 import com.example.pvptimingoptimizer.features.PredictiveSwap;
 import com.example.pvptimingoptimizer.hud.DebugHud;
+import com.example.pvptimingoptimizer.mixin.ShieldDisableBypass;
 import com.example.pvptimingoptimizer.util.TickTimer;
 import net.fabricmc.api.ClientModInitializer;
 import net.fabricmc.fabric.api.client.event.lifecycle.v1.ClientLifecycleEvents;
@@ -31,6 +32,9 @@ public class PvPClient implements ClientModInitializer {
     private static InputBuffer inputBuffer;
     private static CombatTiming combatTiming;
     private static DebugHud debugHud;
+
+    private static int pendingAttackTicks = 0;
+    private static final int MAX_PENDING_TICKS = 20;
 
     @Override
     public void onInitializeClient() {
@@ -107,52 +111,88 @@ public class PvPClient implements ClientModInitializer {
                 }
             }
 
+            if (pendingAttackTicks > 0) {
+                pendingAttackTicks--;
+                if (pendingAttackTicks == 0) {
+                    ShieldDisableBypass.setBypass(false);
+                }
+            }
+
             if (config.autoAttackOnSwap && predictiveSwap.shouldAttackNow(tickTimer.getElapsedTicks())) {
                 if (combatTiming.isCombatWeapon() && client.player != null) {
                     if (client.crosshairTarget instanceof EntityHitResult entityHit) {
-                        resetAttackCooldown();
-                        client.interactionManager.attackEntity(client.player, entityHit.getEntity());
+                        attemptAttack(client, entityHit.getEntity());
                         predictiveSwap.onAttackSent();
                     }
                 }
+            }
+
+            if (config.pingCompensationEnabled && pingCompensation.getPing() > 0) {
+                handlePingCompensation(client, config);
+            }
+
+            if (config.inputBufferEnabled && inputBuffer.wasSwapFollowedByAttack()) {
+                handleInputBuffer(client);
             }
         } catch (Throwable t) {
             LOGGER.error("Error in onClientTick", t);
         }
     }
 
-    private static void resetAttackCooldown() {
-        MinecraftClient client = MinecraftClient.getInstance();
-        if (client == null || client.interactionManager == null) {
+    private static void attemptAttack(MinecraftClient client, net.minecraft.entity.Entity target) {
+        ModConfig config = ModConfig.getConfig();
+        int attempts = getAttemptsFromConfig(config.predictionStrength);
+
+        for (int i = 0; i < attempts; i++) {
+            ShieldDisableBypass.setBypass(true);
+            pendingAttackTicks = Math.max(pendingAttackTicks, 2);
+
+            try {
+                client.interactionManager.attackEntity(client.player, target);
+            } catch (Throwable t) {
+                LOGGER.error("Attack attempt failed", t);
+            }
+
+            if (config.pingCompensationEnabled) {
+                int pingTicks = (int) Math.ceil(pingCompensation.getPing() / 1000.0 * 20.0);
+                for (int j = 0; j < pingTicks && i + 1 < attempts; j++) {
+                    tickTimer.tick();
+                }
+            }
+        }
+    }
+
+    private static int getAttemptsFromConfig(ModConfig.PredictionStrength strength) {
+        return switch (strength) {
+            case LOW -> 1;
+            case MEDIUM -> 2;
+            case HIGH -> 3;
+        };
+    }
+
+    private static void handlePingCompensation(MinecraftClient client, ModConfig config) {
+        int ping = pingCompensation.getPing();
+        if (ping <= 0) {
             return;
         }
 
-        try {
-            java.lang.reflect.Field field = client.interactionManager.getClass().getDeclaredField("attackCooldown");
-            field.setAccessible(true);
-            field.setInt(client.interactionManager, 0);
-        } catch (NoSuchFieldException e) {
+        int offsetTicks = (int) Math.round((ping / 1000.0) * 20.0 * (config.latencyMultiplier / 100.0));
+
+        for (int i = 0; i < offsetTicks; i++) {
+            tickTimer.tick();
+        }
+    }
+
+    private static void handleInputBuffer(MinecraftClient client) {
+        if (client.crosshairTarget instanceof EntityHitResult entityHit) {
+            ShieldDisableBypass.setBypass(true);
+            pendingAttackTicks = 2;
+
             try {
-                java.lang.reflect.Field field = client.interactionManager.getClass().getDeclaredField("field_18725");
-                field.setAccessible(true);
-                field.setInt(client.interactionManager, 0);
-            } catch (Exception e2) {
-                Class<?> clazz = client.interactionManager.getClass();
-                while (clazz != null) {
-                    try {
-                        java.lang.reflect.Field field = clazz.getDeclaredField("attackCooldown");
-                        field.setAccessible(true);
-                        field.setInt(client.interactionManager, 0);
-                        return;
-                    } catch (NoSuchFieldException e3) {
-                        clazz = clazz.getSuperclass();
-                    } catch (Exception e3) {
-                        return;
-                    }
-                }
+                client.interactionManager.attackEntity(client.player, entityHit.getEntity());
+            } catch (Throwable t) {
+                LOGGER.error("Input buffer attack failed", t);
             }
-        } catch (Exception e) {
-            // ignore
         }
     }
 }
