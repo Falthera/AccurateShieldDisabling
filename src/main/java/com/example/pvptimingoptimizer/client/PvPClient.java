@@ -8,7 +8,6 @@ import com.example.pvptimingoptimizer.features.InputBuffer;
 import com.example.pvptimingoptimizer.features.PingCompensation;
 import com.example.pvptimingoptimizer.features.PredictiveSwap;
 import com.example.pvptimingoptimizer.hud.DebugHud;
-import com.example.pvptimingoptimizer.mixin.ShieldDisableBypass;
 import com.example.pvptimingoptimizer.util.TickTimer;
 import net.fabricmc.api.ClientModInitializer;
 import net.fabricmc.fabric.api.client.event.lifecycle.v1.ClientLifecycleEvents;
@@ -111,13 +110,8 @@ public class PvPClient implements ClientModInitializer {
             if (config.autoAttackOnSwap && predictiveSwap.shouldAttackNow(tickTimer.getElapsedTicks())) {
                 if (combatTiming.isCombatWeapon() && client.player != null) {
                     if (client.crosshairTarget instanceof EntityHitResult entityHit) {
-                        try {
-                            ShieldDisableBypass.setBypass(true);
-                            resetAttackCooldown();
-                            client.interactionManager.attackEntity(client.player, entityHit.getEntity());
-                        } finally {
-                            ShieldDisableBypass.setBypass(false);
-                        }
+                        resetAttackCooldown();
+                        client.interactionManager.attackEntity(client.player, entityHit.getEntity());
                         predictiveSwap.onAttackSent();
                     }
                 }
