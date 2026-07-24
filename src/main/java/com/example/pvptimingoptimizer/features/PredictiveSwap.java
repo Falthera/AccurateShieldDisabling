@@ -18,7 +18,7 @@ public class PredictiveSwap {
     private int attackWindowEnd = 0;
     private int lastAttackTick = 0;
 
-    private static final int ATTACK_INTERVAL_TICKS = 1;
+    private static final int ATTACK_INTERVAL_TICKS = 0;
 
     public PredictiveSwap(TickTimer timer) {
         this.timer = timer;

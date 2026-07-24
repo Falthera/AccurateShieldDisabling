@@ -141,28 +141,21 @@ public class PvPClient implements ClientModInitializer {
 
         for (int i = 0; i < attempts; i++) {
             resetAttackCooldown();
-            pendingAttackTicks = Math.max(pendingAttackTicks, 2);
+            pendingAttackTicks = Math.max(pendingAttackTicks, 1);
 
             try {
                 client.interactionManager.attackEntity(client.player, target);
             } catch (Throwable t) {
                 LOGGER.error("Attack attempt failed", t);
             }
-
-            if (config.pingCompensationEnabled) {
-                int pingTicks = (int) Math.ceil(pingCompensation.getPing() / 1000.0 * 20.0);
-                for (int j = 0; j < pingTicks && i + 1 < attempts; j++) {
-                    tickTimer.tick();
-                }
-            }
         }
     }
 
     private static int getAttemptsFromConfig(ModConfig.PredictionStrength strength) {
         return switch (strength) {
-            case LOW -> 1;
-            case MEDIUM -> 2;
-            case HIGH -> 3;
+            case LOW -> 5;
+            case MEDIUM -> 10;
+            case HIGH -> 20;
         };
     }
 
