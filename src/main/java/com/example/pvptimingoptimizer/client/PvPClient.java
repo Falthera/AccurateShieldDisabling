@@ -8,7 +8,6 @@ import com.example.pvptimingoptimizer.features.InputBuffer;
 import com.example.pvptimingoptimizer.features.PingCompensation;
 import com.example.pvptimingoptimizer.features.PredictiveSwap;
 import com.example.pvptimingoptimizer.hud.DebugHud;
-import com.example.pvptimingoptimizer.mixin.ShieldDisableBypass;
 import com.example.pvptimingoptimizer.util.TickTimer;
 import net.fabricmc.api.ClientModInitializer;
 import net.fabricmc.fabric.api.client.event.lifecycle.v1.ClientLifecycleEvents;
@@ -113,9 +112,6 @@ public class PvPClient implements ClientModInitializer {
 
             if (pendingAttackTicks > 0) {
                 pendingAttackTicks--;
-                if (pendingAttackTicks == 0) {
-                    ShieldDisableBypass.setBypass(false);
-                }
             }
 
             if (config.autoAttackOnSwap && predictiveSwap.shouldAttackNow(tickTimer.getElapsedTicks())) {
@@ -144,7 +140,7 @@ public class PvPClient implements ClientModInitializer {
         int attempts = getAttemptsFromConfig(config.predictionStrength);
 
         for (int i = 0; i < attempts; i++) {
-            ShieldDisableBypass.setBypass(true);
+            resetAttackCooldown();
             pendingAttackTicks = Math.max(pendingAttackTicks, 2);
 
             try {
@@ -185,7 +181,7 @@ public class PvPClient implements ClientModInitializer {
 
     private static void handleInputBuffer(MinecraftClient client) {
         if (client.crosshairTarget instanceof EntityHitResult entityHit) {
-            ShieldDisableBypass.setBypass(true);
+            resetAttackCooldown();
             pendingAttackTicks = 2;
 
             try {
